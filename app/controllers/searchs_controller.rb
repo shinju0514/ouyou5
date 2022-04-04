@@ -10,6 +10,7 @@ class SearchsController < ApplicationController
     # @model, @content, @methodを代入した、
     # search_forを@recordsに代入。
     @records = search_for(@model, @content, @method)
+
   end
 
   private
@@ -20,16 +21,24 @@ class SearchsController < ApplicationController
       if method == 'perfect'
         User.where(name: content)
       # 選択した検索方法がが部分一致だったら
-      else
+      elsif method == 'backward'
+        User.where('name LIKE ?', '%'+content)
+      elsif method == 'forward'
+        User.where('name LIKE ?', content+'%')
+      elsif method == 'partial'
         User.where('name LIKE ?', '%'+content+'%')
       end
-    # 選択したモデルがpostだったら
+    # 選択したモデルがbookだったら
     elsif model == 'book'
-      if method == 'perfect'
+     if method == 'perfect'
         Book.where(title: content)
-      else
+     elsif method == 'backward'
+        Book.where('title LIKE ?', '%'+content)
+     elsif method == 'forward'
+        Book.where('title LIKE ?', content+'%')
+     elsif method == 'partial'
         Book.where('title LIKE ?', '%'+content+'%')
-      end
+     end
     end
   end
 end
